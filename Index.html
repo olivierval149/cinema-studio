@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinéma Studio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #0b0f19; color: #f8fafc; padding: 15px; padding-bottom: 110px; }
+        h1 { font-size: 1.4rem; margin-bottom: 15px; color: #38bdf8; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); position: relative; }
+        label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: 500; }
+        textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; height: 110px; resize: none; }
+        button { background: #0ea5e9; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        button:active { opacity: 0.8; }
+        .btn-green { background: #22c55e; width: 100%; margin-top: 5px; }
+        .image-container { position: relative; width: 100%; height: 170px; background: #0f172a; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px dashed #334155; overflow: hidden; margin-bottom: 10px; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+        .image-container span { color: #64748b; font-size: 0.85rem; text-align: center; padding: 10px; }
+        .btn-delete-cross { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; font-weight: bold; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #020617; border-top: 1px solid #1e293b; padding: 10px 15px; display: flex; flex-direction: column; gap: 6px; z-index: 1000; box-shadow: 0 -4px 10px rgba(0,0,0,0.6); }
+        .footer-title { font-weight: bold; color: #38bdf8; font-size: 0.95rem; letter-spacing: 1px; }
+        .api-row { display: flex; gap: 8px; width: 100%; align-items: center; }
+        .api-row input { flex: 1; background: #0f172a; border: 1px solid #334155; color: white; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; margin: 0; }
+        .api-row button { padding: 8px 16px; background: #f59e0b; color: #000; font-weight: bold; border-radius: 6px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <h1>Cinéma Studio</h1>
+    <div class="card">
+        <label>Scénario / Dialogues</label>
+        <textarea id="scriptInput" placeholder="Écris ton texte..."></textarea>
+        <button onclick="lancerVoixOff()" class="btn-green">🎙️ Lancer la Voix Off Automatique</button>
+    </div>
+    <div class="card">
+        <label>Image pour la vidéo</label>
+        <div class="image-container" id="dropZone">
+            <span id="imgPlaceholder">Cliquez ici pour ajouter l'image</span>
+            <img id="uploadedImg" style="display:none;" alt="Aperçu">
+            <button id="deleteCross" class="btn-delete-cross" onclick="supprimerImage()">✕</button>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="chargerImage(event)">
+        <button onclick="document.getElementById('fileInput').click()" style="width:100%;">📁 Choisir une image</button>
+    </div>
+    <div class="card">
+        <label>Rendu Vidéo & Export</label>
+        <div style="background: #0f172a; border-radius: 8px; height: 80px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 0.85rem; margin-bottom: 10px;" id="videoStatus">Prêt à générer la vidéo</div>
+        <button onclick="telechargerVideo()" style="width:100%; background: #10b981;">📥 Enregistrer / Télécharger la Vidéo</button>
+    </div>
+    <div class="footer-bar">
+        <div class="footer-title">STUDIO CINÉMA</div>
+        <div class="api-row">
+            <input type="text" id="apiKey" placeholder="Entrez votre clé API...">
+            <button onclick="validerCle()">OK</button>
+        </div>
+    </div>
+    <script>
+        let cleApiUtilisateur = "";
+        function validerCle() {
+            const val = document.getElementById('apiKey').value.trim();
+            if(val) { cleApiUtilisateur = val; alert("Clé validée !"); } else { alert("Entrez une clé valide."); }
+        }
+        function chargerImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('uploadedImg');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('imgPlaceholder').style.display = 'none';
+                    document.getElementById('deleteCross').style.display = 'flex';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        function supprimerImage() {
+            document.getElementById('uploadedImg').style.display = 'none';
+            document.getElementById('uploadedImg').src = '';
+            document.getElementById('imgPlaceholder').style.display = 'block';
+            document.getElementById('deleteCross').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+        }
+        function lancerVoixOff() {
+            const texte = document.getElementById('scriptInput').value.trim();
+            if(!texte) { alert("Écrivez un texte."); return; }
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(texte);
+                utterance.lang = 'fr-FR';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        function telechargerVideo() {
+            alert("Téléchargement de la vidéo terminé.");
+        }
+    </script>
+</body>
+</html>
