@@ -27,7 +27,7 @@
     input[type="password"], textarea, select, input[type="file"] { width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; }
     textarea { resize: vertical; min-height: 80px; margin-bottom: 12px; }
 
-    .btn { background: var(--accent); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn { background: var(--accent); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .btn-full { width: 100%; padding: 14px; font-size: 1rem; margin-top: 10px; }
     .status-msg { margin-top: 8px; font-size: 0.85rem; color: var(--success); display: none; font-weight: 600; }
 
@@ -57,7 +57,7 @@
       <input type="password" id="apiKey" placeholder="Saisir votre Clé API...">
       <button class="btn" onclick="saveKey()">Valider</button>
     </div>
-    <div id="statusMsg" class="status-msg">✓ Clé validée !</div>
+    <div id="statusMsg" class="status-msg">✓ Clé prise en compte !</div>
   </div>
 
   <!-- PARAMÈTRES VIDÉO -->
@@ -111,7 +111,7 @@
       <div class="effect-chip" onclick="toggleEffect(this)">💨 Vent</div>
       <div class="effect-chip" onclick="toggleEffect(this)">🔥 Feu</div>
       <div class="effect-chip" onclick="toggleEffect(this)">⚡ Éclair</div>
-      <div class="effect-chip" onclick="toggleEffect(this)">🚗 Moteur</div>
+      <div class="effect-chip" onclick="toggleEffect(this)" >🚗 Moteur</div>
       <div class="effect-chip" onclick="toggleEffect(this)">🌊 Vagues</div>
       <div class="effect-chip" onclick="toggleEffect(this)">🐦 Oiseaux</div>
       <div class="effect-chip" onclick="toggleEffect(this)">🔔 Cloche</div>
