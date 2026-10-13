@@ -39,17 +39,15 @@
     .effect-chip.selected { border-color: var(--accent); background: rgba(99, 102, 241, 0.2); }
 
     .image-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-top: 10px; display: none; }
-    .result-box { margin-top: 16px; display: none; text-align: center; }
-    video, audio { width: 100%; border-radius: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
   <h1>🎬 Cinéma Studio</h1>
 
-  <!-- 1. CONFIGURATION API -->
+  <!-- CONFIGURATION API -->
   <div class="section">
-    <div class="section-title">1. Clé API</div>
+    <div class="section-title">Clé API</div>
     <div class="api-container">
       <input type="password" id="apiKey" placeholder="Saisir votre Clé API...">
       <button class="btn" onclick="saveKey()">Valider</button>
@@ -57,9 +55,9 @@
     <div id="statusMsg" class="status-msg">✓ Clé API enregistrée !</div>
   </div>
 
-  <!-- 2. PARAMÈTRES VIDÉO -->
+  <!-- PARAMÈTRES VIDÉO -->
   <div class="section">
-    <div class="section-title">2. Paramètres Réglages</div>
+    <div class="section-title">Paramètres Réglages</div>
     <div class="mode-toggle">
       <button class="mode-btn active" id="btnAuto" onclick="setMode('auto')">Auto</button>
       <button class="mode-btn" id="btnManuel" onclick="setMode('manuel')">Manuel</button>
@@ -88,20 +86,20 @@
     </select>
   </div>
 
-  <!-- 3. IMPORT IMAGE & PROMPTS -->
+  <!-- IMPORT IMAGE & PROMPTS -->
   <div class="section">
-    <div class="section-title">3. Image & Scénario</div>
+    <div class="section-title">Image & Scénario</div>
     <label class="section-title" style="display:block; margin-bottom: 6px;">Importer une image source :</label>
     <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
     <img id="imagePreview" class="image-preview" alt="Aperçu image">
 
-    <textarea id="promptVisual" placeholder="Description du visuel / Prompt vidéo..." style="margin-top:12px;"></textarea>
+    <textarea id="promptVisual" placeholder="Description du visuel / Prompt..." style="margin-top:12px;"></textarea>
     <textarea id="promptAudio" placeholder="Texte de la voix off / Scénario..."></textarea>
   </div>
 
-  <!-- 4. EFFETS SONORES -->
+  <!-- EFFETS SONORES -->
   <div class="section">
-    <div class="section-title">4. Effets Sonores (12)</div>
+    <div class="section-title">Effets Sonores (12)</div>
     <div class="grid-effects">
       <div class="effect-chip" onclick="toggleEffect(this)">💥 Explosion</div>
       <div class="effect-chip" onclick="toggleEffect(this)">🌧️ Pluie</div>
@@ -118,14 +116,7 @@
     </div>
   </div>
 
-  <!-- BOUTON GÉNÉRER & RÉSULTAT -->
-  <button class="btn btn-full" id="btnGenerate" onclick="generateProject()">🚀 Générer le projet vidéo</button>
-
-  <div id="resultBox" class="section result-box">
-    <div class="section-title" id="statusTitle">Génération en cours...</div>
-    <div id="loadingText" style="color: var(--text-muted); margin: 10px 0;">Veuillez patienter pendant la création...</div>
-    <video id="videoResult" controls style="display:none;"></video>
-  </div>
+  <button class="btn btn-full" onclick="generateProject()">🚀 Générer</button>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -164,35 +155,13 @@
       }
     }
 
-    async function generateProject() {
+    function generateProject() {
       const key = localStorage.getItem("cinema_api_key");
       if (!key) {
-        alert("Veuillez d'abord saisir et valider votre Clé API en haut !");
+        alert("Veuillez d'abord saisir et valider votre Clé API !");
         return;
       }
-
-      const duration = document.getElementById("durationSelect").value;
-      const voice = document.getElementById("voiceSelect").value;
-      const visualPrompt = document.getElementById("promptVisual").value;
-      const audioPrompt = document.getElementById("promptAudio").value;
-
-      const resultBox = document.getElementById("resultBox");
-      const loadingText = document.getElementById("loadingText");
-      const videoResult = document.getElementById("videoResult");
-      const statusTitle = document.getElementById("statusTitle");
-
-      resultBox.style.display = "block";
-      statusTitle.innerText = "⏳ Génération en cours...";
-      loadingText.innerText = `Création de la vidéo (${duration}s) avec la ${voice}...`;
-      videoResult.style.display = "none";
-
-      // Simulation de l'appel API avec le temps sélectionné
-      setTimeout(() => {
-        statusTitle.innerText = "✅ Projet généré avec succès !";
-        loadingText.innerText = "Voici l'aperçu de votre création :";
-        videoResult.style.display = "block";
-        videoResult.src = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
-      }, 3000);
+      alert("Prêt à l'emploi avec votre clé et vos paramètres !");
     }
   </script>
 
