@@ -14,6 +14,7 @@
       --text-muted: #94a3b8;
       --border: #334155;
       --success: #22c55e;
+      --error: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
@@ -39,6 +40,10 @@
     .effect-chip.selected { border-color: var(--accent); background: rgba(99, 102, 241, 0.2); }
 
     .image-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-top: 10px; display: none; }
+    
+    .result-section { display: none; margin-top: 16px; text-align: center; }
+    .status-text { margin: 10px 0; font-size: 0.9rem; color: var(--text-muted); }
+    video { width: 100%; border-radius: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -47,12 +52,10 @@
 
   <!-- CONFIGURATION API -->
   <div class="section">
-    <div class="section-title">Clé API</div>
+    <div class="section-title">Clé API Agnes AI</div>
     <div class="api-container">
-      <input type="password" id="apiKey" placeholder="Saisir votre Clé API...">
-      <button class="btn" onclick="saveKey()">Valider</button>
+      <input type="password" id="apiKey" placeholder="Saisir votre Clé API Agnes AI...">
     </div>
-    <div id="statusMsg" class="status-msg">✓ Clé API prise en compte !</div>
   </div>
 
   <!-- PARAMÈTRES VIDÉO -->
@@ -116,16 +119,17 @@
     </div>
   </div>
 
-  <button class="btn btn-full" onclick="generateProject()">🚀 Générer</button>
+  <button class="btn btn-full" id="btnGenerate" onclick="generateProject()">🚀 Générer</button>
+
+  <!-- ZONE D'AFFICHAGE DU RÉSULTAT DE L'API -->
+  <div class="section result-section" id="resultSection">
+    <div class="section-title" id="statusTitle">Génération en cours...</div>
+    <div class="status-text" id="statusText">Connexion à l'API Agnes AI...</div>
+    <video id="videoResult" controls style="display:none;"></video>
+  </div>
 
   <script>
-    function saveKey() {
-      const key = document.getElementById("apiKey").value;
-      if (!key) { alert("Veuillez entrer une clé API."); return; }
-      const msg = document.getElementById("statusMsg");
-      msg.style.display = "block";
-      setTimeout(() => { msg.style.display = "none"; }, 3000);
-    }
+    let base64Image = null;
 
     function setMode(mode) {
       document.getElementById("btnAuto").classList.toggle("active", mode === 'auto');
@@ -144,18 +148,68 @@
           const img = document.getElementById("imagePreview");
           img.src = e.target.result;
           img.style.display = "block";
+          base64Image = e.target.result;
         }
         reader.readAsDataURL(file);
       }
     }
 
-    function generateProject() {
-      const key = document.getElementById("apiKey").value;
+    async function generateProject() {
+      const key = document.getElementById("apiKey").value.trim();
       if (!key) {
-        alert("Veuillez d'abord saisir votre Clé API !");
+        alert("Veuillez entrer votre Clé API Agnes AI !");
         return;
       }
-      alert("Projet prêt !");
+
+      const promptVisual = document.getElementById("promptVisual").value.trim();
+      const promptAudio = document.getElementById("promptAudio").value.trim();
+      const duration = document.getElementById("durationSelect").value;
+      const voice = document.getElementById("voiceSelect").value;
+
+      const resultSection = document.getElementById("resultSection");
+      const statusTitle = document.getElementById("statusTitle");
+      const statusText = document.getElementById("statusText");
+      const videoResult = document.getElementById("videoResult");
+
+      resultSection.style.display = "block";
+      statusTitle.innerText = "⏳ Génération avec Agnes AI";
+      statusText.innerText = "Envoi de la requête en cours...";
+      statusText.style.color = "var(--text-muted)";
+      videoResult.style.display = "none";
+
+      try {
+        const response = await fetch("https://api.agnes.ai/v1/video/generations", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${key}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            prompt: promptVisual,
+            audio_text: promptAudio,
+            duration: parseInt(duration),
+            voice: voice,
+            image: base64Image
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && (data.video_url || data.url)) {
+          statusTitle.innerText = "✅ Génération réussie !";
+          statusText.innerText = "Voici votre vidéo générée par Agnes AI :";
+          videoResult.src = data.video_url || data.url;
+          videoResult.style.display = "block";
+        } else {
+          statusTitle.innerText = "❌ Erreur Agnes AI";
+          statusText.innerText = data.error?.message || data.message || "Impossible de générer la vidéo. Vérifiez votre clé API.";
+          statusText.style.color = "var(--error)";
+        }
+      } catch (err) {
+        statusTitle.innerText = "❌ Erreur de réseau";
+        statusText.innerText = "Erreur de communication avec l'API Agnes AI.";
+        statusText.style.color = "var(--error)";
+      }
     }
   </script>
 
