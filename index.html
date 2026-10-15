@@ -3,365 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinéma Studio</title>
+    <title>Action & Thriller Video Generator</title>
     <style>
-        /* Styles généraux */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: #141414; /* Fond noir style cinéma */
+            font-family: Arial, sans-serif;
+            background-color: #121212;
             color: #ffffff;
-            padding-bottom: 50px;
-        }
-
-        /* 1. STYLE DE L'ENTÊTE */
-        .cinema-header {
-            display: flex;
-            flex-direction: column;
-            background-color: #000000;
-            padding: 20px 30px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            gap: 15px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #e50914; /* Rouge cinéma */
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: #ffffff;
-        }
-
-        /* Clé API Agnes AI */
-        .api-container {
-            display: flex;
-            align-items: center;
-            background-color: #1a1a1a;
-            padding: 10px 15px;
-            border-radius: 6px;
-            border: 1px solid #333333;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .api-label {
-            font-size: 14px;
-            color: #b3b3b3;
-            margin-right: 15px;
-            white-space: nowrap;
-        }
-
-        .api-input {
-            flex: 1;
-            background-color: #262626;
-            border: 1px solid #444444;
-            color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .api-input:focus {
-            border-color: #e50914;
-        }
-
-        .btn-validate {
-            background-color: #e50914;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 12px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-validate:hover {
-            background-color: #b20710;
-        }
-
-        /* 2. ZONE DE CONTENU PRINCIPAL */
-        .main-container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .section-box {
-            background-color: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 8px;
+            margin: 0;
             padding: 20px;
         }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: #e50914;
+            text-align: center;
+        }
+        .form-group {
             margin-bottom: 15px;
-            color: #ffffff;
-            border-left: 4px solid #e50914;
-            padding-left: 10px;
         }
-
-        /* Mode de travail Manuel / Auto */
-        .mode-container {
-            display: flex;
-            gap: 15px;
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
-
-        .btn-mode {
-            flex: 1;
+        input[type="password"], textarea {
+            width: 100%;
+            padding: 10px;
+            background: #2d2d2d;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            width: 100%;
             padding: 12px;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
             font-size: 16px;
             font-weight: bold;
-            border: 2px solid #333333;
-            background-color: #262626;
-            color: #b3b3b3;
-            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
-
-        .btn-mode.active {
-            border-color: #e50914;
-            background-color: #e50914;
-            color: white;
+        button:hover {
+            background: #b20710;
         }
-
-        /* Espace Images */
-        .image-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .btn-secondary {
-            background-color: #333333;
-            color: white;
-            border: none;
-            padding: 10px 15px;
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #2d2d2d;
             border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-secondary:hover {
-            background-color: #444444;
-        }
-
-        /* Input caché pour charger les images du PC */
-        #file-input {
             display: none;
-        }
-
-        .gallery-grid {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-
-        .image-thumb {
-            position: relative;
-            width: 120px;
-            height: 90px;
-            background-color: #262626;
-            border: 1px solid #444444;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .image-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .btn-delete {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background-color: rgba(229, 9, 20, 0.9);
-            color: white;
-            border: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        /* Espace Prompt */
-        .prompt-textarea {
-            width: 100%;
-            height: 100px;
-            background-color: #262626;
-            border: 1px solid #444444;
-            color: white;
-            padding: 12px;
-            border-radius: 6px;
-            resize: none;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .prompt-textarea:focus {
-            border-color: #e50914;
-        }
-
-        /* Bruitages */
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .checkbox-label input {
-            width: 18px;
-            height: 18px;
-            accent-color: #e50914;
-        }
-
-        /* 3. CONTROLES DE GÉNÉRATION ET EXPORT */
-        .generation-box {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .btn-generate {
-            width: 100%;
-            background-color: #e50914;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
-        }
-
-        .btn-generate:hover {
-            background-color: #b20710;
-        }
-
-        .export-actions {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .btn-export {
-            flex: 1;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            border: none;
             text-align: center;
-            transition: opacity 0.3s ease;
         }
-
-        .btn-export.download {
-            background-color: #2e7d32; /* Vert */
-            color: white;
-        }
-
-        .btn-export.capcut {
-            background-color: #000000; /* Noir CapCut */
-            color: #00f2fe; /* Cyan style CapCut */
-            border: 1px solid #00f2fe;
-        }
-
-        .btn-export:hover {
-            opacity: 0.9;
-        }
-
     </style>
 </head>
 <body>
 
-    <!-- ENTÊTE DU SITE -->
-    <header class="cinema-header">
-        <div class="header-top">
-            <a href="#" class="logo">Cinéma <span>Studio</span></a>
-        </div>
+<div class="container">
+    <h2>🎬 Action & Thriller Generator</h2>
+    
+    <div class="form-group">
+        <label for="apiKey">Clé API :</label>
+        <input type="password" id="apiKey" placeholder="Entre ta clé API ici">
+    </div>
 
-        <div class="api-container">
-            <span class="api-label">Agnes AI :</span>
-            <input type="text" id="api-key" class="api-input" placeholder="Entrez votre clé d'API ici...">
-            <button class="btn-validate" onclick="validateAPI()">Valider</button>
-        </div>
-    </header>
+    <div class="form-group">
+        <label for="prompt">Description de la scène (Action / Thriller) :</label>
+        <textarea id="prompt" placeholder="Ex: Course-poursuite nocturne entre deux voitures sportives sous la pluie..."></textarea>
+    </div>
 
-    <!-- ZONE PRINCIPALE -->
-    <main class="main-container">
+    <button onclick="generateVideo()">Générer la vidéo</button>
 
-        <!-- Sélection du Mode -->
-        <div class="section-box">
-            <div class="section-title">Mode de travail</div>
-            <div class="mode-container">
-                <button class="btn-mode active" onclick="setMode(this)">Manuel (Je gère)</button>
-                <button class="btn-mode" onclick="setMode(this)">Auto (L'IA gère tout)</button>
-            </div>
-        </div>
+    <div id="result">
+        <p id="statusText">Génération en cours...</p>
+    </div>
+</div>
 
-        <!-- Espace Images -->
-        <div class="section-box">
-            <div class="section-title">Espace Images</div>
-            <div class="image-actions">
-                <!-- Ce bouton va ouvrir le sélecteur de fichier de votre PC -->
-                <button class="btn-secondary" onclick="triggerUpload()">+ Ajouter des images</button>
-                <input type="file" id="file-input" multiple accept="image/*" onchange="handleImages(this.files)">
-                <button class="btn-secondary" onclick="alert('Téléchargement des images lancé !')">Télécharger les images</button>
-            </div>
-            
-            <div class="gallery-grid" id="gallery">
-                <!-- Les images ajoutées apparaîtront ici avec leur croix rouge -->
-            </div>
-        </div>
+<script>
+    function generateVideo() {
+        const apiKey = document.getElementById('apiKey').value;
+        const prompt = document.getElementById('prompt').value;
+        const resultDiv = document.getElementById('result');
+        const statusText = document.getElementById('statusText');
 
-        <!-- Espace Prompt / Histoire -->
-        <div class="section-box">
-            <div class="section-title">Prompt & Texte (Script + Voix off via Agnes AI)</div>
-            <textarea class="prompt-textarea" placeholder="Écrivez votre prompt ou l'histoire pour générer la voix off..."></textarea>
+        if (!apiKey) {
+            alert('Veuillez entrer une clé API.');
+            return;
+        }
+
+        if (!prompt) {
+            alert('Veuillez décrire votre scène.');
+            return;
+        }
+
+        resultDiv.style.display = 'block';
+        statusText.innerHTML = "🔄 Connexion à l'API et traitement de la scène d'action...";
+
+        // Simulation de l'appel API (tu pourras remplacer cette logique par la vraie requête fetch vers ton API de vidéo)
+        setTimeout(() => {
+            statusText.innerHTML = "✅ Requête envoyée avec succès ! (Intègre ici l'affichage de ta vidéo selon l'API utilisée).";
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
